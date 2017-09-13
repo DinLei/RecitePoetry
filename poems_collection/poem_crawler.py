@@ -22,9 +22,10 @@
 
 import requests
 from lxml import etree
-from poems_collection.poems_crawler_config import target
+from poems_collection.poems_crawler_config import *
 
 
+# 进入一个页面，爬取这个页面下的内容，get获取方式
 def crawler4get(url, xpath_rule):
     req = requests.get(url)
     req.encoding = "utf-8"
@@ -35,7 +36,7 @@ def crawler4get(url, xpath_rule):
 
 
 if __name__ == "__main__":
-    tags_url = target["poems_tags"]["url"]
-    tags_xpath = target["poems_tags"]["xpath"]
+    tags_url = context_target["poems_tags"]["url"]
+    tags_xpath = context_target["poems_tags"]["xpath"]
     tags = crawler4get(tags_url, tags_xpath)
     print(tags[:10])
