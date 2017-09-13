@@ -5,34 +5,26 @@
 # @Author  : BigDin
 # @Contact : dinglei_1107@outlook.com
 
-import requests
-from lxml import etree
-
-
-def bulls_eye(url, xpath_rule):
-    req = requests.get(url)
-    req.encoding = "utf-8"
-    html = req.text
-    selector = etree.HTML(html)
-    return selector.xpath(xpath_rule)
-
-
-def easy_crawler(url, xpath_rule):
-    target_nodes = bulls_eye(url, xpath_rule)
-    for node in target_nodes:
-        if node.text:
-            tmp = node.text
-        elif node.tail:
-            tmp = node.tail
-        else:
-            continue
-        yield tmp.strip()
-
 if __name__ == "__main__":
-    url1 = "http://so.gushiwen.org/view_47873.aspx"
-    xr1 = "//div[@id='contson47873']/p | //div[@id='contson47873']/p/br | //div[@id='contson47873']"
-    tmp1 = easy_crawler(url1, xr1)
-    tmp2 = [x for x in tmp1]
-    print(tmp1)
-    print(tmp2)
-    print(len(tmp2))
+    from poems_collection.poem_crawler import PoemCrawler
+    from poems_collection.poems_crawler_config import context_target
+
+    title = context_target["details"]["title"]
+    dynasty = context_target["details"]["dynasty"]
+    writer = context_target["details"]["writer"]
+    content = context_target["details"]["content"]
+    tags = context_target["details"]["tags"]
+
+    my_crawler = PoemCrawler()
+    test_url = "http://so.gushiwen.org/view_64154.aspx"
+    t1 = my_crawler.easy_crawler(test_url, title)
+    d1 = my_crawler.easy_crawler(test_url, dynasty)
+    w1 = my_crawler.easy_crawler(test_url, writer)
+    tg1 = my_crawler.easy_crawler(test_url, tags)
+    c1 = my_crawler.easy_crawler(test_url, content, idx_info=True)
+
+    print(t1)
+    print(d1)
+    print(w1)
+    print(tg1)
+    print(c1)
