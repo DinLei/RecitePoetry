@@ -66,7 +66,7 @@ class PoemCrawler:
         bulls_eye意为靶心——抓取到指定的内容
         :param url: single-html-page
         :param xpath_dict: xpath规则，字典格式
-        :return: 
+        :return: nothing
         """
         assert isinstance(xpath_dict, dict)
         target_nodes = {}
