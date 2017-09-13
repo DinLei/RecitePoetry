@@ -8,6 +8,25 @@
 import os
 import glob
 import pickle
+from utils.sql_util import SqliteOperation
+
+
+def save_to_sqlite(data, database, table):
+    """
+    将数据存放到对应的表中，自动添加数值索引
+    :param data:
+    :param database: 数据库路径
+    :param table: 数据存放的表
+    :return: 无返回
+    """
+    assert isinstance(data, list)
+
+    sqlite = SqliteOperation(database)
+    for element in enumerate(data):
+        sqlite.insert_one(table, element)
+    sqlite.close()
+
+    print("Save successfully.")
 
 
 # 读取pickle
