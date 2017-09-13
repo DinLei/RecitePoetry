@@ -31,6 +31,7 @@ context_target = {
 sub_links_target = {
     "root_url": "http://so.gushiwen.org",
     "sub_blocks": "//div[@class='typecont']",
+
     "entity_links": {
         "entity": "./div[@class='bookMl']/strong",
         "sub_links": "./span/a/@href"

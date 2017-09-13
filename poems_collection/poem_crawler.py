@@ -32,15 +32,15 @@ class PoemCrawler:
     爬取方法: requests + xpath，需要提供爬取URL和指定内容的xpath
     """
     @staticmethod
-    def easy_crawler(url, **xpath_rule):
+    def easy_crawler(url, **xpath_dict):
         """
         进入一个页面，爬取这个页面下的内容，get获取方式，指定内容用text即可获取
         :param url: 网页的地址
         :param xpath_rule: 指定内容的xpath
         :return: 返回爬取内容
         """
-        assert isinstance(xpath_rule, dict)
-        target_nodes = PoemCrawler.bulls_eye(url, **xpath_rule)
+        assert isinstance(xpath_dict, dict)
+        target_nodes = PoemCrawler.bulls_eye(url, **xpath_dict)
 
         fruits = {}
         for key, element in target_nodes.items():
@@ -61,7 +61,7 @@ class PoemCrawler:
         return fruits
 
     @staticmethod
-    def bulls_eye(url, **xpath_dict):
+    def bulls_eye(url, *xpath_list, **xpath_dict):
         """
         bulls_eye意为靶心——抓取到指定的内容
         :param url: single-html-page
@@ -75,8 +75,7 @@ class PoemCrawler:
         html = req.text
         selector = etree.HTML(html)
         for key, rule in xpath_dict.items():
-            print(1)
-            print(key, rule)
+            print("key is {} and rule is {}".format(key, rule))
             if key == "ancient_text":
                 find = re.search(r"view_(\d+).aspx", url)
                 assert find
@@ -95,17 +94,15 @@ class PoemCrawler:
         :return: 分版块的次级链接集，字典格式
         """
         assert isinstance(sub_links_dict, dict)
-        print(0)
-        print(sub_links_dict)
+        print("the parameter is {}".format(sub_links_dict))
         forum_dict = {}
         root_url = sub_links_dict["root_url"]
-
+        sub_blocks = sub_links_dict["sub_blocks"]
         entity_links = sub_links_dict["entity_links"]
 
-        bulls_eye = PoemCrawler.bulls_eye(url, sub_blocks=sub_links_dict["sub_blocks"])
-        for element in bulls_eye.values():
-            print(2)
-            print(element)
+        target_nodes = PoemCrawler.bulls_eye(url, )
+        for element in target_nodes.values():
+            print("the element is {}".format(element))
             entity = element.xpath(entity_links["entity"])
             links = element.xpath(entity_links["sub_links"])
             num_links = len(links)
