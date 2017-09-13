@@ -13,14 +13,16 @@ context_target = {
 }
 
 sub_links_target = {
-    "main_url": "http://so.gushiwen.org",
+    "root_url": "http://so.gushiwen.org",
+    "sub_blocks": "//div[@class='typecont']",
+    "entity_links": {
+        "entity": "./div[@class='bookMl']/strong",
+        "sub_links": "./span/a/@href"
+    }
+}
+
+fix_urls = {
     "tang_poems": "http://so.gushiwen.org/gushi/tangshi.aspx",
     "ancient_poems": "http://so.gushiwen.org/gushi/sanbai.aspx",
-    "song_cis": "http://so.gushiwen.org/gushi/songsan.aspx",
-
-    "sub_links": {
-        "blocks": "//div[@class='typecont']",
-        "entity": "./div[@class='bookMl']/strong",
-        "sub_links": "./a/@href"
-    }
+    "song_cis": "http://so.gushiwen.org/gushi/songsan.aspx"
 }
