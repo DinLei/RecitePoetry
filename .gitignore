@@ -1,0 +1,12 @@
+__pycache__
+.idea
+.DS_Store
+*.[oa]
+*.pyc
+*.dat
+*.sql
+*.txt
+*.csv
+*.pkl
+*.model
+*.db
