@@ -4,9 +4,9 @@ create table poems_summary(
 	title 	varchar	 	not null,
 	writer	varchar,
 	dynasty	varchar,
-	tag	    varchar,
-	nature	varchar,
-	style	  varchar		not null
+	tags	  varchar,
+	style		varchar,
+	type	  varchar		not null
 );
 
 -- 古诗文
@@ -16,17 +16,21 @@ create table poems_context(
 	serial		int   	not null
 );
 
--- 古诗文翻译
-create table poems_annotation(
-	poem_id			varchar		primary key,
-	annotation	varchar 	not null,
-	serial			int   		not null
-);
-
 -- 诗歌主题标签
 create table poems_tags(
 	tag_id	int			primary key,
 	tag			varchar
+);
+
+------------------------------------------------
+-- 译文暂时不爬取 --
+------------------------------------------------
+
+-- 古诗文翻译
+create table poems_translation(
+	poem_id			varchar		primary key,
+	translation	varchar 	not null,
+	serial			int   		not null
 );
 
 -- 古诗字词注释

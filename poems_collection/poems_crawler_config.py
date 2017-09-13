@@ -9,6 +9,15 @@ context_target = {
     "poems_tags": {
         "url": "http://so.gushiwen.org/shiwen/tags.aspx",
         "xpath": "//div[@class='bookcont']/span/a"
+    },
+
+    "details": {
+        "title": "//div[@class='cont']/h1",
+        "dynasty": "//div[@class='sons'][1]/div[@class='cont']/p[@class='source']/a[1]",
+        "writer": "//div[@class='sons'][1]/div[@class='cont']/p[@class='source']/a[2]",
+        # "content": "//div[@id='contson{}']/p | //div[@id='contson{}']/p/br | //div[@id='contson{}']",
+        "content": "substring-before(//textarea[@id='txtare{}'],'——')",
+        "tags": "//div[@class='sons'][1]/div[@class='tag']/a"
     }
 }
 

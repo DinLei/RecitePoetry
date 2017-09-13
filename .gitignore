@@ -1,10 +1,10 @@
 __pycache__
+backups
 .idea
 .DS_Store
 *.[oa]
 *.pyc
 *.dat
-*.sql
 *.txt
 *.csv
 *.pkl

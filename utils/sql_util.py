@@ -53,7 +53,7 @@ class SqliteOperation:
     def insert_one(self, tbname, data=None):
         sql = "insert into "+tbname+" values ("
         try:
-            if isinstance(data, list):
+            if isinstance(data, list) or isinstance(data, tuple):
                 sql += "?," * (len(data) - 1) + "?)"
             else:
                 sql += "?)"
@@ -84,7 +84,7 @@ class SqliteOperation:
 
     def update_one(self, tbname, field, data):
         try:
-            self.__conn.execute("update "+tbname+" set "+
+            self.__conn.execute("update "+tbname+" set " +
                                 field[0]+" = ? where "+field[1]+" = ?", data)
             self.__conn.commit()
         except Exception as e:
