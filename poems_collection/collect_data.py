@@ -69,7 +69,6 @@ def get_ancient_text():
         for style, sub_links in classical_links.items():
             LINKS.extend(sub_links)
             for link in sub_links:
-                c_count += 1
                 text_detail = PoemCrawler.easy_crawler(link, **detail)
                 title = text_detail["title"]
                 dynasty = text_detail["dynasty"]
@@ -86,6 +85,7 @@ def get_ancient_text():
                 sql_conn.insert_one("poems_summary", (text_index, title, writer, dynasty, tags, style, tmp_type))
 
                 s_id = 1
+                c_count += 1
                 for sentence in ancient_text:
                     sql_conn.insert_one("poems_context", (text_index, sentence, s_id))
                     s_id += 1
@@ -102,7 +102,6 @@ def get_ancient_text():
             one_page_links = PoemCrawler.sub_links_crawler(main_url, partitioned=False, **total_part)
             LINKS.extend(one_page_links)
             for link in one_page_links:
-                t_count += 1
                 text_detail = PoemCrawler.easy_crawler(link, **detail)
                 title = text_detail["title"]
                 dynasty = text_detail["dynasty"]
@@ -119,6 +118,7 @@ def get_ancient_text():
                 sql_conn.insert_one("poems_summary", (text_index, title, writer, dynasty, tags, "unk", tmp_type))
 
                 s_id = 1
+                t_count += 1
                 for sentence in ancient_text:
                     sql_conn.insert_one("poems_context", (text_index, sentence, s_id))
                     s_id += 1
