@@ -13,6 +13,7 @@ def test(*args, **kwargs1):
     print("================")
 
 if __name__ == "__main__":
+    import re
     from poems_collection.poems_crawler_config import *
     from poems_collection.poem_crawler import PoemCrawler
     #
@@ -21,17 +22,23 @@ if __name__ == "__main__":
     # tags = PoemCrawler.easy_crawler(tags_url, tags_xpath)
     # print(len(tags))
     # print(tags)
-
-    test_url2 = "http://so.gushiwen.org/view_20788.aspx"
-    print(PoemCrawler.easy_crawler(test_url2, **context_target["text_detail"]))
+    #
+    # test_url2 = "http://so.gushiwen.org/view_20788.aspx"
+    # print(PoemCrawler.easy_crawler(test_url2, **context_target["text_detail"]))
 
     # test_url3 = "http://so.gushiwen.org/gushi/tangshi.aspx"
     # test_url4 = "http://so.gushiwen.org/type.aspx?p=300&x=%E8%AF%97"
-    # test_url5 = "http://so.gushiwen.org/mingju/Default.aspx?p=5"
+    test_url5 = "http://so.gushiwen.org/mingju/Default.aspx?p=5"
     # print(PoemCrawler.sub_links_crawler(test_url4, **sub_links_target["total_ancient_text"]))
-    # outcome = PoemCrawler.easy_crawler(test_url5, **context_target["rhesis"]["rhesis_detail"])
-    # print(len(outcome))
-    # print(outcome)
+    outcome = PoemCrawler.easy_crawler(test_url5, **context_target["rhesis"]["rhesis_detail"])
+    print(len(outcome))
+    print(outcome)
+    sentences = outcome["sentences"]
+    reference = outcome["reference"]
+    assert len(sentences) == len(reference)
+    for idx, ref in enumerate(reference):
+        ref = re.sub("[《》]", "", ref.strip())
+        print(ref, sentences[idx])
     # print(test(test_url3, **sub_links_target))
     # print(PoemCrawler.sub_links_crawler(test_url3, partitioned=True, **sub_links_target["classical_ancient_text"]))
 

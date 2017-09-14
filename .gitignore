@@ -9,4 +9,4 @@ backups
 *.csv
 *.pkl
 *.model
-*.db
+*.db*

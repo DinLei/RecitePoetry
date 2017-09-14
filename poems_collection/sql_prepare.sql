@@ -2,7 +2,7 @@
 create table poems_summary(
 	poem_id	varchar		primary key,
 	title 	varchar	 	not null,
-	writer	varchar,
+	writer	varchar		not null,
 	dynasty	varchar,
 	tags	varchar,
 	style	varchar,
@@ -11,7 +11,7 @@ create table poems_summary(
 
 -- 古诗文
 create table poems_context(
-	poem_id		varchar	primary key,
+	poem_id		varchar	not null,
 	sentence	varchar	not null,
 	serial		int   	not null
 );
