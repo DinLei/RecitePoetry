@@ -12,50 +12,82 @@ from utils.sql_util import SqliteOperation
 from poems_collection.poems_crawler_config import *
 from poems_collection.poem_crawler import PoemCrawler
 
-TEXT_HASH_INDICES = set()
+TEXT_HASH_INDICES = {}
 LINKS = []
-SQLITE = SqliteOperation("../poems_data.db")
 SAVE_PATH = "../backups"
 
 
 # 诗文标签爬取
 def get_tags():
+    sql_conn = SqliteOperation("../poems_data.db")
     tags_url = context_target["poems_tags"]["url"]
     tags_xpath = context_target["poems_tags"]["xpath"]
     tags = PoemCrawler.easy_crawler(tags_url, tags_xpath)
+    for data in enumerate(tags):
+        sql_conn.insert_one("poems_tags", data)
+    sql_conn.close()
+    print("All tags has been collected")
+
+
+# 名句爬取
+def get_rhesis():
+    sql_conn = SqliteOperation("../poems_data.db")
+    rhesis_url_rule = context_target["rhesis"]["sub_pages"]
+    pr = context_target["rhesis"]["page_range"]
+    detail = context_target["rhesis"]["rhesis_detail"]
+    for pn in range(pr[0], pr[1]):
+        print("Rhesis:::Is crawling the page-{}...".format(pn))
+        main_url = rhesis_url_rule.format(pn)
+        outcome = PoemCrawler.easy_crawler(main_url, **detail)
+        sentences = outcome["sentences"]
+        reference = outcome["reference"]
+        assert len(sentences) == len(reference)
+        for idx, ref in enumerate(reference):
+            if ref not in TEXT_HASH_INDICES:
+                TEXT_HASH_INDICES[ref] = hash_index(ref)
+            poem_id = TEXT_HASH_INDICES[ref]
+            sql_conn.insert_one("rhesis", (poem_id, sentences[idx]))
+    sql_conn.close()
+    print("All rhesis has been collected!")
 
 
 # 唐诗、古诗、宋词、元曲爬取
 def get_ancient_text():
+    sql_conn = SqliteOperation("../poems_data.db")
     detail = context_target["text_detail"]
     no_page_turn = fix_urls["no_page_turning"]
     to_page_turn = fix_urls["to_page_turning"]
     classical_part = sub_links_target["classical_ancient_text"]
     total_part = sub_links_target["total_ancient_text"]
 
+    c_count = 0
     for t_type, main_url in no_page_turn.items():
         tmp_type = type_mapper[t_type]
         classical_links = PoemCrawler.sub_links_crawler(main_url, partitioned=True, **classical_part)
         for style, sub_links in classical_links.items():
             LINKS.extend(sub_links)
             for link in sub_links:
+                c_count += 1
                 text_detail = PoemCrawler.easy_crawler(link, **detail)
                 title = text_detail["title"]
                 dynasty = text_detail["dynasty"]
                 writer = text_detail["writer"]
                 ancient_text = text_detail["ancient_text"]
                 tags = "|".join(text_detail["tags"])
-                text_index = hash_index(writer+title)
-                if text_index in TEXT_HASH_INDICES:
-                    continue
-                TEXT_HASH_INDICES.add(text_index)
-                SQLITE.insert_one("poems_summary", (text_index, title, writer, dynasty, tags, style, tmp_type))
+
+                ref = writer+title
+                if ref not in TEXT_HASH_INDICES:
+                    TEXT_HASH_INDICES[ref] = hash_index(ref)
+                text_index = TEXT_HASH_INDICES[ref]
+                sql_conn.insert_one("poems_summary", (text_index, title, writer, dynasty, tags, style, tmp_type))
 
                 s_id = 1
                 for sentence in ancient_text:
-                    SQLITE.insert_one("poems_context", (text_index, sentence, s_id))
+                    sql_conn.insert_one("poems_context", (text_index, sentence, s_id))
                     s_id += 1
-
+                if c_count % 100 == 0:
+                    print("Classical ancient text collected num: {}...".format(c_count))
+    t_count = 0
     for t_type, url_info in to_page_turn.items():
         tmp_type = type_mapper[t_type]
         url_rule = url_info["url"]
@@ -65,23 +97,48 @@ def get_ancient_text():
             one_page_links = PoemCrawler.sub_links_crawler(main_url, partitioned=False, **total_part)
             LINKS.extend(one_page_links)
             for link in one_page_links:
+                t_count += 1
                 text_detail = PoemCrawler.easy_crawler(link, **detail)
                 title = text_detail["title"]
                 dynasty = text_detail["dynasty"]
                 writer = text_detail["writer"]
                 ancient_text = text_detail["ancient_text"]
                 tags = "|".join(text_detail["tags"])
-                text_index = hash_index(writer+title)
-                if text_index in TEXT_HASH_INDICES:
+
+                ref = writer + title
+                if ref not in TEXT_HASH_INDICES:
+                    TEXT_HASH_INDICES[ref] = hash_index(ref)
+                else:
                     continue
-                TEXT_HASH_INDICES.add(text_index)
-                SQLITE.insert_one("poems_summary", (text_index, title, writer, dynasty, tags, "unk", tmp_type))
+                text_index = TEXT_HASH_INDICES[ref]
+                sql_conn.insert_one("poems_summary", (text_index, title, writer, dynasty, tags, "unk", tmp_type))
 
                 s_id = 1
                 for sentence in ancient_text:
-                    SQLITE.insert_one("poems_context", (text_index, sentence, s_id))
+                    sql_conn.insert_one("poems_context", (text_index, sentence, s_id))
                     s_id += 1
+                if t_count % 1000 == 0:
+                    print("Classical ancient text collected num: {}...".format(t_count))
+    sql_conn.close()
 
-save_as_pickle(TEXT_HASH_INDICES, "text_hash_indices.pkl", SAVE_PATH)
-save_as_pickle(LINKS, "links.pkl", SAVE_PATH)
+
+if __name__ == "__main__":
+    # from concurrent.futures import ThreadPoolExecutor
+    funs = [get_tags, get_rhesis, get_ancient_text]
+    for f in funs:
+        f()
+    # num_thread = 3
+    # executor = ThreadPoolExecutor(num_thread)
+    # futures = []
+    # for i in range(num_thread):
+    #     print("start thread 【{}】 and launch the function 【{}】".format(i, funs[i].__name__))
+    #     futures.append(executor.submit(funs[i]))
+    # executor.shutdown()
+    # for future in futures:
+    #     future.result()
+    # print("over!")
+
+    save_as_pickle(TEXT_HASH_INDICES, "text_hash_indices.pkl", SAVE_PATH)
+    save_as_pickle(LINKS, "links.pkl", SAVE_PATH)
+
 

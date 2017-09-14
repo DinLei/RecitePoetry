@@ -21,6 +21,7 @@ context_target = {
 
     "rhesis": {
         "sub_pages": "http://so.gushiwen.org/mingju/Default.aspx?p={}",
+        "page_range": [1, 144],
         "rhesis_detail": {
             "sentences": "//div[@class='main3']/div[@class='left']/div[@class='sons']/div[@class='cont']/a[1]",
             "reference": "//div[@class='main3']/div[@class='left']/div[@class='sons']/div[@class='cont']/a[2]"

@@ -42,27 +42,36 @@ class PoemCrawler:
         :param xpath_dict: 指定内容的xpath
         :return: 返回爬取内容
         """
-        assert isinstance(xpath_dict, dict)
         if xpath_rules:
             fruits = []
             target_nodes = PoemCrawler.bulls_eye(url, *xpath_rules)
             if not isinstance(target_nodes, list):
                 target_nodes = [target_nodes]
             for element in target_nodes:
-                if isinstance(element, str):
-                    tmp = re.split("[。，！？]", element.strip())
-                    fruits.append([x for x in tmp if len(x) > 0])
-                    continue
-                outcomes = []
-                for node in element:
-                    if node.text:
-                        content = node.text
-                    elif node.tail:
-                        content = node.tail
-                    else:
+                if isinstance(element, list):
+                    outcomes = []
+                    for node in element:
+                        if node.text:
+                            content = node.text
+                        elif node.tail:
+                            content = node.tail
+                        else:
+                            continue
+                        outcomes.append(content.strip())
+                    fruits.append(outcomes[0] if len(outcomes) == 1 else outcomes)
+                else:
+                    if isinstance(element, str):
+                        tmp = re.split("[。，！？]", element.strip())
+                        fruits.append([x for x in tmp if len(x) > 0])
                         continue
-                    outcomes.append(content.strip())
-                fruits[key] = outcomes[0] if len(outcomes) == 1 else outcomes
+                    else:
+                        if element.text:
+                            content = element.text
+                        elif element.tail:
+                            content = element.tail
+                        else:
+                            continue
+                        fruits.append(content.strip())
             return fruits
 
         target_nodes = PoemCrawler.bulls_eye(url, **xpath_dict)
@@ -89,6 +98,7 @@ class PoemCrawler:
         """
         bulls_eye意为靶心——抓取到指定的内容
         :param url: single-html-page
+        :param xpath_rules: xpath规则，列表格式
         :param xpath_dict: xpath规则，字典格式
         :return: nothing
         """
