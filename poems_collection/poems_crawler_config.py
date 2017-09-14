@@ -33,7 +33,7 @@ sub_links_target = {
     "sub_blocks": "//div[@class='typecont']",
 
     "entity_links": {
-        "entity": "./div[@class='bookMl']/strong",
+        "entity": "string(./div[@class='bookMl']/strong)",
         "sub_links": "./span/a/@href"
     }
 }
