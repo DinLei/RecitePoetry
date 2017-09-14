@@ -30,9 +30,10 @@ create table rhesis(
 
 -- 书籍
 create table books(
-	book_id		int		not null,
-	section		varchar	not null,
-	content		text	not null
+	book_title          varchar not null,
+	section_title		varchar	not null,
+	paragraph	        text	not null,
+	paragraph_id        int     not null
 );
 
 ------------------------------------------------

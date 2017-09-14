@@ -13,9 +13,10 @@ def test(*args, **kwargs1):
     print("================")
 
 if __name__ == "__main__":
-    import re
-    from poems_collection.poems_crawler_config import *
-    from poems_collection.poem_crawler import PoemCrawler
+    # import re
+    # from poems_collection.poems_crawler_config import *
+    # from poems_collection.poem_crawler import PoemCrawler
+    from poems_collection.collect_data import get_books
     #
     # tags_url = context_target["poems_tags"]["url"]
     # tags_xpath = context_target["poems_tags"]["xpath"]
@@ -46,24 +47,4 @@ if __name__ == "__main__":
     # test({"a2": 11, "b2": 22})
     # test(**{"a1": 11, "b1": 22}, **{"a2": 55, "b2": 66})
     # test(*"aa")
-    def get_books():
-        books_url = books_target["books_url"]
-        title_xpath = books_target["title"]
-        book_one_info = books_target["book_one_info"]
-        detail = books_target["detail"]
-
-        for main_url in books_url:
-            print(main_url)
-            book_title = PoemCrawler.easy_crawler(main_url, title_xpath)
-            print(book_title)
-            section_links = PoemCrawler.sub_links_crawler(main_url, partitioned=True, **book_one_info)
-            print(section_links)
-            for sub_links in section_links.values():
-                print(sub_links)
-                for link in sub_links:
-                    text_detail = PoemCrawler.easy_crawler(link, **detail)
-                    section_title = text_detail["title"]
-                    ancient_text = text_detail["ancient_text"]
-                    print(book_title, section_title, ancient_text)
-        print("Books have been collected!")
     get_books()

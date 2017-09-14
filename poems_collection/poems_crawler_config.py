@@ -82,7 +82,7 @@ books_target = {
         "sub_blocks": "//div[@class='bookcont']",
         "sub_links": {
             "block_name": "string(./div[@class='bookMl']/strong)",
-            "sub_links": "./span/a/@href"
+            "sub_links": "./div/span/a/@href"
         },
     },
 
@@ -93,7 +93,7 @@ books_target = {
     ],
     "detail": {
         "title": "//div[@class='cont']/h1",
-        "ancient_text": "//div[@class='contson']/p"
+        "paragraph": "//div[@class='contson']/p"
     }
 }
 

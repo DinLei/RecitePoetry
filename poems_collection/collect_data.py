@@ -131,21 +131,24 @@ def get_ancient_text():
 # 古书籍爬取
 def get_books():
     sql_conn = SqliteOperation("../poems_data.db")
-    book_url = books_target["book_url"]
+    books_url = books_target["books_url"]
     title_xpath = books_target["title"]
     book_one_info = books_target["book_one_info"]
     detail = books_target["detail"]
 
-    for main_url in book_url:
+    for main_url in books_url:
         book_title = PoemCrawler.easy_crawler(main_url, title_xpath)
         section_links = PoemCrawler.sub_links_crawler(main_url, partitioned=True, **book_one_info)
         for sub_links in section_links.values():
             for link in sub_links:
+                p_id = 0
                 text_detail = PoemCrawler.easy_crawler(link, **detail)
                 section_title = text_detail["title"]
-                ancient_text = text_detail["ancient_text"]
-
-
+                paragraphs = text_detail["paragraph"]
+                for pa in paragraphs:
+                    p_id += 1
+                    sql_conn.insert_one("books", (book_title, section_title, pa, p_id))
+        print("《{}》 has been collected.".format(book_title))
     sql_conn.close()
     print("Books have been collected!")
 
