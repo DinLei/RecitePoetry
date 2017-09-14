@@ -7,9 +7,9 @@
 
 
 def test(*args, **kwargs):
-    print(args)
-    print(type(kwargs))
-    print(kwargs)
+    print("test: {}".format(args))
+    print("test: {}".format(type(kwargs)))
+    print("test: {}".format(kwargs))
     print("================")
 
 if __name__ == "__main__":
@@ -20,8 +20,8 @@ if __name__ == "__main__":
     # test_url2 = "http://so.gushiwen.org/view_20788.aspx"
     test_url3 = "http://so.gushiwen.org/gushi/tangshi.aspx"
     # print(PoemCrawler.easy_crawler(test_url2, **context_target["poem_detail"]))
-    print(test(test_url3, **sub_links_target))
-    print(PoemCrawler.easy_crawler(test_url3, **sub_links_target))
+    # print(test(test_url3, **sub_links_target))
+    print(PoemCrawler.sub_links_crawler(test_url3, **sub_links_target))
     #
     # test(a=2, b=3)
     # test({"a2": 11, "b2": 22})
