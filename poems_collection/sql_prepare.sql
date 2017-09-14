@@ -18,8 +18,8 @@ create table poems_context(
 
 -- 诗歌主题标签
 create table poems_tags(
-	tag_id	int		primary key,
-	tag		varchar
+	tag_id	varchar		primary key,
+	tag			varchar
 );
 
 -- 名句
