@@ -28,6 +28,13 @@ create table rhesis(
     pairs     varchar
 );
 
+-- 书籍
+create table books(
+	book_id		int		not null,
+	section		varchar	not null,
+	content		text	not null
+);
+
 ------------------------------------------------
 -- 译文暂时不爬取 --
 ------------------------------------------------

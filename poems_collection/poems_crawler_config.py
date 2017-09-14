@@ -75,3 +75,26 @@ type_mapper = {
     "total_cis": "词",
     "total_qus": "曲",
 }
+
+books_target = {
+    "book_one_info": {
+        "root_url": "http://so.gushiwen.org",
+        "sub_blocks": "//div[@class='bookcont']",
+        "sub_links": {
+            "block_name": "string(./div[@class='bookMl']/strong)",
+            "sub_links": "./span/a/@href"
+        },
+    },
+
+    "title": "//div[@class='sonspic']/div[@class='cont']/h1",
+    "books_url": [
+        "http://so.gushiwen.org/guwen/book_102.aspx",
+        "http://so.gushiwen.org/guwen/book_114.aspx"
+    ],
+    "detail": {
+        "title": "//div[@class='cont']/h1",
+        "ancient_text": "//div[@class='contson']/p"
+    }
+}
+
+

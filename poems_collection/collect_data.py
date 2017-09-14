@@ -128,6 +128,27 @@ def get_ancient_text():
     sql_conn.close()
 
 
+# 古书籍爬取
+def get_books():
+    sql_conn = SqliteOperation("../poems_data.db")
+    book_url = books_target["book_url"]
+    title_xpath = books_target["title"]
+    book_one_info = books_target["book_one_info"]
+    detail = books_target["detail"]
+
+    for main_url in book_url:
+        book_title = PoemCrawler.easy_crawler(main_url, title_xpath)
+        section_links = PoemCrawler.sub_links_crawler(main_url, partitioned=True, **book_one_info)
+        for sub_links in section_links.values():
+            for link in sub_links:
+                text_detail = PoemCrawler.easy_crawler(link, **detail)
+                section_title = text_detail["title"]
+                ancient_text = text_detail["ancient_text"]
+
+
+    sql_conn.close()
+    print("Books have been collected!")
+
 if __name__ == "__main__":
     # from concurrent.futures import ThreadPoolExecutor
     funs = [get_ancient_text, get_rhesis, get_tags]

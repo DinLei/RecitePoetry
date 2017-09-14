@@ -28,21 +28,42 @@ if __name__ == "__main__":
 
     # test_url3 = "http://so.gushiwen.org/gushi/tangshi.aspx"
     # test_url4 = "http://so.gushiwen.org/type.aspx?p=300&x=%E8%AF%97"
-    test_url5 = "http://so.gushiwen.org/mingju/Default.aspx?p=5"
+    # test_url5 = "http://so.gushiwen.org/mingju/Default.aspx?p=5"
     # print(PoemCrawler.sub_links_crawler(test_url4, **sub_links_target["total_ancient_text"]))
-    outcome = PoemCrawler.easy_crawler(test_url5, **context_target["rhesis"]["rhesis_detail"])
-    print(len(outcome))
-    print(outcome)
-    sentences = outcome["sentences"]
-    reference = outcome["reference"]
-    assert len(sentences) == len(reference)
-    for idx, ref in enumerate(reference):
-        ref = re.sub("[《》]", "", ref.strip())
-        print(ref, sentences[idx])
+    # outcome = PoemCrawler.easy_crawler(test_url5, **context_target["rhesis"]["rhesis_detail"])
+    # print(len(outcome))
+    # print(outcome)
+    # sentences = outcome["sentences"]
+    # reference = outcome["reference"]
+    # assert len(sentences) == len(reference)
+    # for idx, ref in enumerate(reference):
+    #     ref = re.sub("[《》]", "", ref.strip())
+    #     print(ref, sentences[idx])
     # print(test(test_url3, **sub_links_target))
     # print(PoemCrawler.sub_links_crawler(test_url3, partitioned=True, **sub_links_target["classical_ancient_text"]))
 
     # test(a=2, b=3)
     # test({"a2": 11, "b2": 22})
     # test(**{"a1": 11, "b1": 22}, **{"a2": 55, "b2": 66})
-    test(*"aa")
+    # test(*"aa")
+    def get_books():
+        books_url = books_target["books_url"]
+        title_xpath = books_target["title"]
+        book_one_info = books_target["book_one_info"]
+        detail = books_target["detail"]
+
+        for main_url in books_url:
+            print(main_url)
+            book_title = PoemCrawler.easy_crawler(main_url, title_xpath)
+            print(book_title)
+            section_links = PoemCrawler.sub_links_crawler(main_url, partitioned=True, **book_one_info)
+            print(section_links)
+            for sub_links in section_links.values():
+                print(sub_links)
+                for link in sub_links:
+                    text_detail = PoemCrawler.easy_crawler(link, **detail)
+                    section_title = text_detail["title"]
+                    ancient_text = text_detail["ancient_text"]
+                    print(book_title, section_title, ancient_text)
+        print("Books have been collected!")
+    get_books()

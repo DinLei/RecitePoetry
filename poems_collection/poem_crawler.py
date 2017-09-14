@@ -72,7 +72,7 @@ class PoemCrawler:
                         else:
                             continue
                         fruits.append(content.strip())
-            return fruits
+            return fruits[0] if len(fruits) == 1 else fruits
 
         target_nodes = PoemCrawler.bulls_eye(url, **xpath_dict)
         fruits = {}
