@@ -23,6 +23,7 @@
 import re
 import requests
 from lxml import etree
+from collections import Iterable
 
 
 class PoemCrawler:
@@ -36,7 +37,7 @@ class PoemCrawler:
         """
         进入一个页面，爬取这个页面下的内容，get获取方式，指定内容用text即可获取
         :param url: 网页的地址
-        :param xpath_rule: 指定内容的xpath
+        :param xpath_dict: 指定内容的xpath
         :return: 返回爬取内容
         """
         assert isinstance(xpath_dict, dict)
@@ -61,27 +62,35 @@ class PoemCrawler:
         return fruits
 
     @staticmethod
-    def bulls_eye(url, *xpath_list, **xpath_dict):
+    def bulls_eye(url, *xpath_rules, **xpath_dict):
         """
         bulls_eye意为靶心——抓取到指定的内容
         :param url: single-html-page
         :param xpath_dict: xpath规则，字典格式
         :return: nothing
         """
-        assert isinstance(xpath_dict, dict)
-        target_nodes = {}
         req = requests.get(url)
         req.encoding = "utf-8"
         html = req.text
         selector = etree.HTML(html)
-        for key, rule in xpath_dict.items():
-            print("key is {} and rule is {}".format(key, rule))
-            if key == "ancient_text":
-                find = re.search(r"view_(\d+).aspx", url)
-                assert find
-                idx = find.groups()[0]
-                rule = rule.format(idx)
-            target_nodes[key] = selector.xpath(rule)
+        target_nodes = None
+        if xpath_rules:
+            if len(xpath_rules) == 1:
+                return selector.xpath(xpath_rules[0])
+            target_nodes = []
+            for rule in xpath_rules:
+                print("rule is {}".format(rule))
+                target_nodes.append(selector.xpath(rule))
+        if xpath_dict:
+            target_nodes = {}
+            for key, rule in xpath_dict.items():
+                print("key is {} and rule is {}".format(key, rule))
+                if key == "ancient_text":
+                    find = re.search(r"view_(\d+).aspx", url)
+                    assert find
+                    idx = find.groups()[0]
+                    rule = rule.format(idx)
+                target_nodes[key] = selector.xpath(rule)
         return target_nodes
 
     @staticmethod
@@ -94,19 +103,18 @@ class PoemCrawler:
         :return: 分版块的次级链接集，字典格式
         """
         assert isinstance(sub_links_dict, dict)
-        print("the parameter is {}".format(sub_links_dict))
         forum_dict = {}
         root_url = sub_links_dict["root_url"]
-        sub_blocks = sub_links_dict["sub_blocks"]
         entity_links = sub_links_dict["entity_links"]
 
-        target_nodes = PoemCrawler.bulls_eye(url, )
-        for element in target_nodes.values():
-            print("the element is {}".format(element))
+        target_nodes = PoemCrawler.bulls_eye(url, sub_links_dict["sub_blocks"])
+
+        assert isinstance(target_nodes, Iterable)
+        for element in target_nodes:
             entity = element.xpath(entity_links["entity"])
             links = element.xpath(entity_links["sub_links"])
             num_links = len(links)
-            if len(entity) == 1 and num_links > 0:
-                new_links = list(zip([root_url]*num_links, links))
-                forum_dict[entity.text] = new_links
+            if entity and num_links > 0:
+                new_links = [root_url+sl for sl in links]
+                forum_dict[entity] = new_links
         return forum_dict
